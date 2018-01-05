@@ -1,0 +1,4 @@
+git clone https://github.com/matthewgao/F5-steganography
+
+cd F5-steganography
+java Extract /homr/mrrobot/ctf/123456.jpg -p 123456
