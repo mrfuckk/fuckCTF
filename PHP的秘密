@@ -3,3 +3,10 @@ if ($_POST['s1'] !== $_POST['s2'] && md5($_POST['s1']) === md5($_POST['s2'])){
     echo $flag; 
 }FLAG
 WP:这道题不能用弱类型绕过，但是可以用数组导致md5()函数报错返回空，空===空符合条件，得到flag
+s1[1]=&s2[]=
+
+2.标准弱类型
+if ($_POST['s1'] !== $_POST['s2'] && md5($_POST['s1']) == md5($_POST['s2'])){
+    echo $flag; 
+}
+WP:取md5之后为0e开头的字符串，如s1=QNKCDZO&s2=240610708
