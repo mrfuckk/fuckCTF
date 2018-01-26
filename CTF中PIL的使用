@@ -1,0 +1,293 @@
+打开一张图片
+>>> from PIL import Image
+>>> img = Image.open("test.jpg")  #打开图片
+>>> img.show()  #载入图片
+
+进行45°旋转
+# -*- coding:utf-8 -*-
+# Image模块开篇例子
+from PIL import Image
+im = Image.open('test.bmp') # 读取图片
+im.rotate(45).show() # 将图片旋转，并用系统自带的图片工具显示图片
+
+变换图片尺寸
+>>> import Image
+>>> img = Image.open("test.jpg")
+>>> x,y = img.size
+>>> img.thumbnail((x//2,y//2))  #缩小百分之50
+>>> img.save('test.jpg','jpeg') #以jpeg保存
+
+提取RGB值
+#coding = utf-8
+from PIL import Image
+img = Image.open('test.jpg')
+pix = img.load()
+w = img.size[0]
+h = img.size[1]
+for x in range(w):
+    for y in range(h):
+        r, g, b = pix[x, y]
+        print r,g,b
+        
+       
+根据RGB值还原图片
+#-*- coding:utf-8 -*-
+from PIL import Image
+import re
+x = 1280  #长
+y = 960  #宽
+image = Image.new("RGB",(x,y))
+f = open('momo.txt') 
+for i in range(0,x):
+    for j in range(0,y):
+        l = f.readline()
+        r = l.split(", ")
+        image.putpixel((i,j),(int(r[0]),int(r[1]),int(r[2])))
+image.save('image.jpg')
+
+
+
+创建缩略图
+# -*- coding:utf-8 -*-
+# PIL中创建缩略图(create thumbnails)
+from PIL import Image
+import glob,os
+
+size = 128,128
+
+for infile in glob.glob("*.jpg"): # glob的作用是文件搜索，返回的是一个列表
+    file,ext = os.path.splitext(infile) # 将文件的文件名和拓展名分开，用于之后的保存重命名
+    im = Image.open(infile)
+    im.thumbnail(size,Image.ANTIALIAS)  # 等比例缩放
+    im.save(file+".thumbnail","JPEG")
+    #im.show() # 显示缩略图
+    #print im.size,im.mode
+缩略图不能直接双击打开，而可以使用PIL.image的open读取，然后使用show()方法进行显示。 
+
+
+
+图像处理
+
+PIL.image.alpha_composite(im1,im2)
+
+PIL.image.blend(im1,im2,alpha)
+
+PIL.Image.composite(im1,im2,mask)
+
+这三个方法都属于图片的合成或者融合。都要求im1和im2的mode和size要一致，alpha代表图片占比的意思，
+而mask是mode可以为”1”,”L”或者”RGBA”的size和im1、im2一致的。
+# coding:utf-8 -*-
+from PIL import Image
+# 图片合成
+
+# PIL的alpha_composite(im1,im2) 图像通道融合
+# im2要和im1的size和mode一致，且要求格式为RGBA
+im1 = Image.open("test.png")
+im2 = Image.open("test2.png")
+
+newim1 = Image.alpha_composite(im1,im2) # 将im2合成到im1中，如果其一是透明的，
+# 才能看到结果，不然最终结果只会显示出im2
+newim1.show()
+#print(im1.mode)
+
+# -----------------------------------------
+# image.blend(im1,im2,alpha)
+# alpha为透明度
+newim2 = Image.blend(im1,im2,0.5)
+newim2.show()
+
+# -----------------------------------------
+mask = Image.open("mask.png")
+newim3 = Image.composite(im2,im1,mask)
+newim3.show()
+
+
+
+PIL.image.eval(image,*args)
+# -*- coding:utf-8 -*-
+from PIL import Image
+im = Image.open("test.png")
+
+imnew = Image.eval(im,lambda i:i*2) # 将原图片的像素点，都乘2，返回的是一个Image对象
+#print imnew.mode
+imnew.show()
+im.show()
+
+
+
+创建图像
+
+(1) PIL.image.new(mode,size,color=0)
+
+使用模式和大小，创建一个新的图像。其中，mode可以是”L”,”RGB”,”RGBA”;而size则是一个tuple(元组),color应该和mode相对应。
+
+下面例子，分别创建”L”、”RGB”和”RGBA”的图片。
+# -*- coding:utf-8 -*-
+from PIL import Image
+# 创建图像
+# 创建一个灰度图像
+
+newL = Image.new("L",(28,28),255)
+newL.show()
+
+# 创建一个RGb图像
+newrgb = Image.new("RGB",(28,28),(20,200,45))
+newrgb.show()
+
+newrgba = Image.new("RGBA",(28,28),(20,200,45,255))
+newrgba.show()
+print "The frist image:",newL.size,newL.mode
+print "The second image:",newrgb.size,newrgb.mode
+print "The third image:",newrgba.size,newrgba.mode
+
+
+
+(2)以其他形式创建图像
+
+a. 以数组的形式创建图像，PIL.image.fromarray(obj,mode=None)
+
+obj - 图像的数组，类型可以是numpy.array()
+
+mode - 如果不给出，会自动判断
+
+本人觉得这个功能还是挺实用的，可以将一个数组（具体一点就是像素数组）转换为图像，从图像的本质去处理图像。
+
+下面一段程序，就是用fromarray()函数实现图像的灰度化（使用了两种方法）。
+# -*- coding:utf-8 -*-
+from PIL import Image
+import numpy as np
+a = Image.open("fromimg.png")
+a.show()
+b = a.resize((28,28))
+datab = list(b.getdata())
+#print type(datab)
+obj1 = []
+obj2 = []
+for i in range(len(datab)):
+    obj1.append([sum(datab[i])/3])  # 灰度化方法1：RGB三个分量的均值
+    obj2.append([0.3*datab[i][0]+0.59*datab[i][1]+0.11*datab[i][2]])
+    #灰度化方法2：根据亮度与RGB三个分量的对应关系：Y=0.3*R+0.59*G+0.11*B
+
+obj1 = np.array(obj1).reshape((28,28))
+obj2 = np.array(obj2).reshape((28,28))
+print obj1
+print obj2
+
+arrayimg1 = Image.fromarray(obj1)
+arrayimg2 = Image.fromarray(obj2)
+arrayimg1.show()
+arrayimg2.show()
+
+
+Image模块下的Image类
+
+下面的Image是一个图像对象，而不是模块！
+(1) Image.convert(mode=None,matrix=None,dither=None,palette=0,color=256)
+
+该方法，同样可以实现上面的灰度化处理。
+
+# -*- coding:utf-8 -*-
+from PIL import Image
+img = Image.open("test.png")
+# 灰度化：将RGB/RGBA -> L
+img = img.convert("L")
+img.show()
+
+
+(2) Image.copy()
+
+将读取的图片复制一份。
+
+# -*- coding:utf-8 -*-
+from PIL import Image
+img = Image.open("test.png")
+# 灰度化：将RGB/RGBA -> L
+img = img.convert("L")
+#img.show()
+
+# ------ copy()----------
+img1 = img.copy()
+img1.show()
+
+
+
+将灰度化的图片复制一份，因此该程序的运行结果和之前的一致。
+
+(3) Image.filter(filter)
+
+该函数是用于图像滤波的，PIL中自带了很多的滤波器，就是括号中的filter的参数。filter应该是一个ImaageFilter模块下的对象。这
+里把ImageFilter模块讲了。其实，该模块就是提供滤波器。自带的滤波器有：
+
+# -*- coding:utf-8 -*-
+from PIL import Image
+from PIL import ImageFilter
+
+# BLUR - 模糊处理
+# CONTOUR - 轮廓处理
+# DETAIL - 增强
+# EDGE_ENHANCE - 将图像的边缘描绘得更清楚
+# EDGE_ENHANCE_NORE - 程度比EDGE_ENHANCE更强
+# EMBOSS - 产生浮雕效果
+# SMOOTH - 效果与EDGE_ENHANCE相反，将轮廓柔和
+# SMOOTH_MORE - 更柔和
+# SHARPEN - 效果有点像DETAIL
+testimg = Image.open("filter1.png")
+testimg.show()
+filterimg = testimg.filter(ImageFilter.MedianFilter)
+filterimg.show()
+
+
+
+
+(4) 使用各种方法/函数获取图片的基本信息
+
+Image.getbands()
+
+Image.geebbox()
+
+Image.getcolors(maxcolor=256)
+
+Image.getdata(band=None)（一般和list()结合使用）
+
+Image.getextrema()
+
+Image.getpixel((x,y))
+
+Image.histogram(mask=None,extrema=None)
+
+# -*- coding:utf-8 -*-
+from PIL import Image
+img1 = Image.open("test.png")
+img1.show()
+
+# getbands() - 显示该图像的所有通道，返回一个tuple
+bands = img1.getbands()
+print bands
+
+# getbbox() - 返回一个像素坐标，4个元素的tuple
+bboxs = img1.getbbox()
+print bboxs
+
+# getcolors() - 返回像素信息，是一个含有元素的列表[(该种像素的数量，(该种像素)),(...),...]
+colors = img1.getcolors()
+print colors
+
+# getdata() - 返回图片所有的像素值，要使用list()才能显示出具体数值
+#data = list(img1.getdata())
+#print data
+
+# getextrema() - 获取图像中每个通道的像素最小和最大值,是一个tuple类型
+extremas = img1.getextrema()
+print extremas
+
+# getpixel() - 获取该坐标
+pixels = img1.getpixel((87,180))
+print pixels
+
+# histogram() - 返回图片的像素直方图
+print(img1.histogram())
+
+
+
+
+
