@@ -1,0 +1,26 @@
+base64加密：
+>>> import base64  
+>>> encode = base64.b64encode(b'I love you')  
+>>> encode  
+b'SSBsb3ZlIHlvdQ=='
+
+base64解密:
+    >>> import base64  
+    >>> decode = base64.b64decode(b'SSBsb3ZlIHlvdQ==')  
+    >>> decode  
+    b'I love you'  
+    
+    
+base32加密:
+    >>> import base64  
+    >>> encode = base64.b32encode(b'I love you')  
+    >>> encode  
+    b'JEQGY33WMUQHS33V'  
+    
+base32解密:
+    >>> import base64  
+    >>> decode = base64.b32decode(b'JEQGY33WMUQHS33V')  
+    >>> decode  
+    b'I love you'  
+    
+    类似的将base64.b32encode变成base64.b16encode
