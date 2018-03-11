@@ -1,0 +1,15 @@
+import requests
+import re
+
+r1=requests.Session()#超级重要
+url = 'http://119.23.73.3:5001/web10/'
+html = r1.get(url)
+moctf = re.findall(r'moctf',html.text)
+j = 0
+for i in moctf:
+    j+=1
+print(j)
+data = {'answer':j-1}
+print(data)
+post = r1.post("http://119.23.73.3:5001/web10/work.php",data=data)
+print(post.text)
