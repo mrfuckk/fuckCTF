@@ -13,3 +13,4 @@ data = {'answer':j-1}
 print(data)
 post = r1.post("http://119.23.73.3:5001/web10/work.php",data=data)
 print(post.text)
+#http://119.23.73.3:5001/web10/
